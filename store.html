@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lompa — لافتات نيون</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Outfit:wght@700;900&display=swap');
+
+:root {
+  --gold: #f5a623;
+  --gold2: #ffcc66;
+  --dark: #0a0805;
+  --card: #110e08;
+  --border: #2a2010;
+  --text: #fff;
+  --muted: #7a6a4a;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--dark);
+  font-family: 'Cairo', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  text-align: center;
+  padding: 48px 20px 36px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,166,35,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.logo-wrap {
+  display: inline-block;
+  margin-bottom: 16px;
+  position: relative;
+}
+.logo-glow {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: #0f0b06;
+  border: 2px solid #2a1f08;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 0 40px rgba(245,166,35,0.3), inset 0 0 20px rgba(245,166,35,0.05);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { box-shadow: 0 0 40px rgba(245,166,35,0.3), inset 0 0 20px rgba(245,166,35,0.05); }
+  50% { box-shadow: 0 0 70px rgba(245,166,35,0.5), inset 0 0 30px rgba(245,166,35,0.1); }
+}
+.logo-glow img { width: 80px; height: 80px; object-fit: contain; }
+
+.brand-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px; font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(245,166,35,0.6);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.brand-tagline {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── MAIN CHOICES ── */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 500px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+}
+
+.choice-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.choice-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(245,166,35,0.08) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.choice-card:hover::before { opacity: 1; }
+.choice-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(245,166,35,0.15);
+}
+.choice-card:active { transform: scale(0.97); }
+
+.choice-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+.choice-title { font-size: 15px; font-weight: 900; color: var(--gold); margin-bottom: 4px; }
+.choice-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* ── PRODUCTS SECTION ── */
+#products-section, #custom-section, #product-detail, #confirm-section {
+  display: none;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  width: 38px; height: 38px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px; color: var(--gold);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.back-btn:hover { background: #1a1408; }
+.section-title { font-size: 18px; font-weight: 900; }
+
+/* PRODUCTS GRID */
+.products-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.product-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(245,166,35,0.1);
+}
+.product-card:active { transform: scale(0.98); }
+
+.product-thumb {
+  width: 110px; height: 110px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.product-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.product-thumb .no-img {
+  width: 100%; height: 100%;
+  background: #1a1408;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+
+.product-info { padding: 14px 16px; flex: 1; }
+.product-name { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
+.product-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.product-price { font-size: 18px; font-weight: 900; color: var(--gold); }
+.product-price span { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+.product-arrow {
+  padding-left: 14px; padding-right: 14px;
+  color: var(--gold); font-size: 20px; flex-shrink: 0;
+}
+
+/* ── PRODUCT DETAIL ── */
+/* Image Slider */
+.slider-wrap {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: #1a1408;
+  aspect-ratio: 4/3;
+}
+.slider-wrap img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.slider-wrap img.active { opacity: 1; }
+.slider-dots {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(245,166,35,0.3);
+  cursor: pointer; transition: background 0.2s, transform 0.2s;
+}
+.dot.active { background: var(--gold); transform: scale(1.3); }
+
+.slider-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(245,166,35,0.3);
+  color: var(--gold); font-size: 18px;
+  width: 36px; height: 36px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.slider-btn:hover { background: rgba(245,166,35,0.2); }
+.slider-btn.prev { right: 10px; }
+.slider-btn.next { left: 10px; }
+
+.detail-name { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.detail-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+
+/* OPTIONS SECTION */
+.option-block { margin-bottom: 22px; }
+.option-label {
+  font-size: 13px; font-weight: 700; color: var(--muted);
+  margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* SIZE SELECTOR */
+.size-tabs {
+  display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.size-tab {
+  padding: 7px 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 30px; font-family: 'Cairo', sans-serif;
+  font-size: 13px; color: var(--muted);
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.size-tab.active {
+  background: #1a1408; border-color: var(--gold); color: var(--gold);
+}
+
+.sizes-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.size-option {
+  padding: 12px 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; cursor: pointer;
+  transition: all 0.2s; text-align: center;
+}
+.size-option.active {
+  border-color: var(--gold);
+  background: #1a1408;
+  box-shadow: 0 0 14px rgba(245,166,35,0.1);
+}
+.size-option .size-dim { font-size: 14px; font-weight: 700; color: #fff; }
+.size-option .size-price { font-size: 12px; color: var(--gold); margin-top: 2px; }
+
+.custom-size-input {
+  display: none;
+  margin-top: 10px;
+}
+.custom-size-input.show { display: block; }
+.custom-size-input input {
+  width: 100%; background: var(--card);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; color: #fff;
+  font-family: 'Cairo', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.2s;
+}
+.custom-size-input input:focus { border-color: var(--gold); }
+.custom-size-input input::placeholder { color: var(--muted); }
+
+/* COLOR SELECTOR */
+.colors-grid {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.color-option {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  cursor: pointer;
+}
+.color-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+}
+.color-option.active .color-circle {
+  border-color: var(--gold);
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(245,166,35,0.4);
+}
+.color-name { font-size: 10px; color: var(--muted); }
+
+/* PRICE DISPLAY */
+.price-display {
+  background: #1a1408;
+  border: 1px solid #2a1f08;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.price-label { font-size: 13px; color: var(--muted); }
+.price-value { font-size: 26px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(245,166,35,0.4); }
+.price-value span { font-size: 14px; font-weight: 400; color: var(--muted); }
+
+/* ── BUTTONS ── */
+.cta-btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; width: 100%; padding: 16px;
+  border: none; border-radius: 14px;
+  cursor: pointer; font-family: 'Cairo', sans-serif;
+  font-size: 17px; font-weight: 700;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-bottom: 10px;
+}
+.cta-btn:active { transform: scale(0.98); }
+.cta-primary {
+  background: linear-gradient(135deg, #f5a623, #e8850a);
+  color: #0a0805;
+  box-shadow: 0 0 30px rgba(245,166,35,0.35);
+}
+.cta-primary:hover { opacity: 0.9; }
+.cta-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.cta-dark { background: var(--card); color: var(--muted); font-size: 14px; padding: 12px; }
+
+/* ── CONFIRM SECTION ── */
+.order-summary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1408;
+  font-size: 14px;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-key { color: var(--muted); }
+.summary-val { font-weight: 700; color: #fff; text-align: left; max-width: 55%; }
+.summary-val.gold { color: var(--gold); font-size: 18px; }
+
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 600; }
+.field input, .field textarea {
+  width: 100%; background: var(--card);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; color: #fff;
+  font-family: 'Cairo', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.2s; resize: none;
+}
+.field input:focus, .field textarea:focus { border-color: var(--gold); }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+
+/* ── CUSTOM SECTION ── */
+.custom-steps { display: flex; flex-direction: column; gap: 16px; }
+.step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 16px;
+}
+.step-num {
+  font-size: 11px; color: var(--gold); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.step-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.upload-area:hover { border-color: var(--gold); }
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-text { font-size: 13px; color: var(--muted); }
+.upload-preview { width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
+
+.radio-options { display: flex; flex-direction: column; gap: 8px; }
+.radio-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: #0f0c07; border: 1px solid var(--border);
+  border-radius: 12px; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.radio-opt.active { border-color: var(--gold); }
+.radio-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: border-color 0.2s;
+}
+.radio-opt.active .radio-dot { border-color: var(--gold); }
+.radio-dot::after {
+  content: ''; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--gold);
+  opacity: 0; transition: opacity 0.2s;
+}
+.radio-opt.active .radio-dot::after { opacity: 1; }
+.radio-label { font-size: 14px; font-weight: 600; }
+.radio-sub { font-size: 12px; color: var(--muted); }
+
+/* ── ERROR / TOAST ── */
+.error-msg { color: #ff5555; font-size: 12px; text-align: center; margin-bottom: 10px; display: none; }
+.error-msg.show { display: block; }
+
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: #1a1408; border: 1px solid var(--gold);
+  color: var(--gold); padding: 14px 28px;
+  border-radius: 30px; font-size: 15px; font-weight: 700;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ── SUCCESS ── */
+.success-screen {
+  display: none; text-align: center; padding: 60px 20px;
+}
+.success-screen.show { display: block; }
+.success-icon { font-size: 70px; margin-bottom: 16px; animation: pop 0.5s ease; }
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.success-title { font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+.success-desc { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+.spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2px solid rgba(10,8,5,0.3);
+  border-top-color: #0a0805; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── NEON FLICKER ANIMATION ── */
+@keyframes flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
+  20%,24%,55% { opacity: 0.6; }
+}
+
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+}
+.empty-state div { font-size: 50px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<!-- LOGO IMG (hidden, loaded from storage) -->
+<img id="logo-img-src" src="LOGO_B64" style="display:none" />
+
+<!-- ══════════════ HERO ══════════════ -->
+<div class="hero" id="main-hero">
+  <div class="logo-wrap">
+    <div class="logo-glow">
+      <img id="logo-display" src="LOGO_B64" alt="Lompa" />
+    </div>
+  </div>
+  <div class="brand-name">Lompa</div>
+  <div class="brand-tagline" id="tagline-display">Not everybody shines</div>
+</div>
+
+<!-- ══════════════ CHOICES ══════════════ -->
+<div class="choices" id="choices-section">
+  <div class="choice-card" onclick="showProducts()">
+    <span class="choice-icon">✨</span>
+    <div class="choice-title">منتجات جاهزة</div>
+    <div class="choice-sub">اختر من تشكيلتنا</div>
+  </div>
+  <div class="choice-card" onclick="showCustom()">
+    <span class="choice-icon">🎨</span>
+    <div class="choice-title">تصميم خاص</div>
+    <div class="choice-sub">لافتة باسمك أو شعارك</div>
+  </div>
+</div>
+
+<!-- ══════════════ PRODUCTS LIST ══════════════ -->
+<div id="products-section">
+  <div class="section-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="section-title">✨ المنتجات الجاهزة</div>
+  </div>
+  <div class="products-grid" id="products-grid">
+    <div class="empty-state"><div>📦</div><p>لا توجد منتجات بعد</p></div>
+  </div>
+</div>
+
+<!-- ══════════════ PRODUCT DETAIL ══════════════ -->
+<div id="product-detail">
+  <div class="section-header">
+    <div class="back-btn" onclick="goProducts()">←</div>
+    <div class="section-title" id="detail-title">اللافتة</div>
+  </div>
+
+  <!-- Slider -->
+  <div class="slider-wrap" id="slider-wrap">
+    <button class="slider-btn prev" onclick="slideImg(1)">‹</button>
+    <button class="slider-btn next" onclick="slideImg(-1)">›</button>
+    <div class="slider-dots" id="slider-dots"></div>
+  </div>
+
+  <div class="detail-name" id="detail-name"></div>
+  <div class="detail-desc" id="detail-desc"></div>
+
+  <!-- SIZE CATEGORY TABS -->
+  <div class="option-block">
+    <div class="option-label">عدد الكلمات / القياس</div>
+    <div class="size-tabs" id="size-tabs">
+      <div class="size-tab active" data-cat="one_word" onclick="selectSizeCat(this)">كلمة</div>
+      <div class="size-tab" data-cat="two_words" onclick="selectSizeCat(this)">كلمتان</div>
+      <div class="size-tab" data-cat="three_words" onclick="selectSizeCat(this)">ثلاث كلمات</div>
+      <div class="size-tab" data-cat="custom" onclick="selectSizeCat(this)">مخصص</div>
+    </div>
+    <div class="sizes-grid" id="sizes-grid"></div>
+    <div class="custom-size-input" id="custom-size-wrap">
+      <input type="text" id="custom-size" placeholder="مثال: 50×20 cm" />
+    </div>
+  </div>
+
+  <!-- COLOR -->
+  <div class="option-block">
+    <div class="option-label">اللون</div>
+    <div class="colors-grid" id="colors-grid"></div>
+  </div>
+
+  <!-- PRICE -->
+  <div class="price-display">
+    <div class="price-label">السعر</div>
+    <div class="price-value" id="price-display">— <span>دج</span></div>
+  </div>
+
+  <button class="cta-btn cta-primary" onclick="goConfirm()">
+    🛒 اطلب الآن
+  </button>
+</div>
+
+<!-- ══════════════ CONFIRM ══════════════ -->
+<div id="confirm-section">
+  <div class="section-header">
+    <div class="back-btn" id="confirm-back-btn" onclick="goProductDetail()">←</div>
+    <div class="section-title">تأكيد الطلب</div>
+  </div>
+
+  <div id="success-order" class="success-screen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">تم استلام طلبك!</div>
+    <div class="success-desc">سنتواصل معك قريباً لتأكيد التوصيل 🚀</div>
+    <button class="cta-btn cta-dark" style="margin-top:24px;" onclick="goHome()">العودة للرئيسية</button>
+  </div>
+
+  <div id="confirm-form">
+    <div class="order-summary" id="order-summary"></div>
+
+    <div class="field">
+      <label>الاسم الكامل *</label>
+      <input type="text" id="c-name" placeholder="أحمد محمد" />
+    </div>
+    <div class="field">
+      <label>رقم الهاتف *</label>
+      <input type="tel" id="c-phone" placeholder="0555 123 456" />
+    </div>
+    <div class="field">
+      <label>العنوان / الولاية *</label>
+      <input type="text" id="c-address" placeholder="الجزائر العاصمة..." />
+    </div>
+    <div class="field">
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="c-notes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
+    </div>
+
+    <div class="error-msg" id="c-error">⚠️ يرجى ملء جميع الحقول</div>
+
+    <button class="cta-btn cta-primary" id="c-submit" onclick="submitOrder()">
+      ✅ تأكيد الطلب
+    </button>
+    <button class="cta-btn cta-dark" onclick="goProductDetail()">← رجوع</button>
+  </div>
+</div>
+
+<!-- ══════════════ CUSTOM ══════════════ -->
+<div id="custom-section">
+  <div class="section-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="section-title">🎨 تصميم خاص</div>
+  </div>
+
+  <div id="success-custom" class="success-screen">
+    <div class="success-icon">🌟</div>
+    <div class="success-title">تم إرسال طلبك!</div>
+    <div class="success-desc">سنتواصل معك لمناقشة تصميمك وتأكيد الطلب 🚀</div>
+    <button class="cta-btn cta-dark" style="margin-top:24px;" onclick="goHome()">العودة للرئيسية</button>
+  </div>
+
+  <div id="custom-form" class="custom-steps">
+
+    <!-- STEP 1: Design -->
+    <div class="step-card">
+      <div class="step-num">الخطوة 1</div>
+      <div class="step-title">📝 النص أو الاسم المطلوب</div>
+      <div class="field" style="margin:0">
+        <input type="text" id="cu-text" placeholder="مثال: OPEN، اسمك، شعارك..." />
+      </div>
+    </div>
+
+    <!-- STEP 2: Have design? -->
+    <div class="step-card">
+      <div class="step-num">الخطوة 2</div>
+      <div class="step-title">🖼️ هل عندك صورة للتصميم؟</div>
+      <div class="radio-options">
+        <div class="radio-opt active" id="has-design-yes" onclick="selectDesignOpt('yes')">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">نعم، عندي صورة</div>
+            <div class="radio-sub">سأرفع صورة التصميم</div>
+          </div>
+        </div>
+        <div class="radio-opt" id="has-design-no" onclick="selectDesignOpt('no')">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">لا، أريدكم تصممون لي</div>
+            <div class="radio-sub">سنصمم لك مجاناً</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('cu-img').click()">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">اضغط لرفع صورة التصميم</div>
+          <img class="upload-preview" id="upload-preview" />
+        </div>
+        <input type="file" id="cu-img" accept="image/*" style="display:none" onchange="previewCustomImg(event)" />
+      </div>
+    </div>
+
+    <!-- STEP 3: Size -->
+    <div class="step-card">
+      <div class="step-num">الخطوة 3</div>
+      <div class="step-title">📐 القياس</div>
+      <div class="radio-options">
+        <div class="radio-opt active" id="cu-size-std" onclick="selectCustomSize('std')">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">من القياسات المتاحة</div>
+          </div>
+        </div>
+        <div class="radio-opt" id="cu-size-custom" onclick="selectCustomSize('custom')">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="radio-label">قياس مخصص</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px" id="cu-size-std-wrap">
+        <div class="size-tabs" id="cu-size-tabs">
+          <div class="size-tab active" data-cat="one_word" onclick="selectCuSizeCat(this)">كلمة</div>
+          <div class="size-tab" data-cat="two_words" onclick="selectCuSizeCat(this)">كلمتان</div>
+          <div class="size-tab" data-cat="three_words" onclick="selectCuSizeCat(this)">ثلاث كلمات</div>
+        </div>
+        <div class="sizes-grid" id="cu-sizes-grid"></div>
+      </div>
+      <div class="custom-size-input show" id="cu-size-custom-wrap" style="display:none">
+        <input type="text" id="cu-custom-size" placeholder="مثال: 70×25 cm" />
+      </div>
+    </div>
+
+    <!-- STEP 4: Colors -->
+    <div class="step-card">
+      <div class="step-num">الخطوة 4</div>
+      <div class="step-title">🎨 اللون (يمكن اختيار أكثر من لون)</div>
+      <div class="colors-grid" id="cu-colors-grid"></div>
+    </div>
+
+    <!-- STEP 5: Contact -->
+    <div class="step-card">
+      <div class="step-num">الخطوة 5</div>
+      <div class="step-title">📞 بياناتك</div>
+      <div class="field">
+        <label>الاسم *</label>
+        <input type="text" id="cu-name" placeholder="اسمك" />
+      </div>
+      <div class="field">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="cu-phone" placeholder="0555 123 456" />
+      </div>
+      <div class="field" style="margin:0">
+        <label>ملاحظات إضافية</label>
+        <textarea id="cu-notes" rows="2" placeholder="أي تفاصيل أخرى..."></textarea>
+      </div>
+    </div>
+
+    <div class="error-msg" id="cu-error">⚠️ يرجى ملء الحقول المطلوبة</div>
+
+    <button class="cta-btn cta-primary" id="cu-submit" onclick="submitCustom()">
+      🌟 أرسل طلب التصميم
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+emailjs.init('tXuxT5nGM-nLLmpFC');
+
+// ── DATA ──
+const SIZES = {
+  one_word: [
+    { label: "40×15 cm", price: 8000 },
+    { label: "60×20 cm", price: 10000 },
+    { label: "80×25 cm", price: 12000 },
+    { label: "100×30 cm", price: 14000 }
+  ],
+  two_words: [
+    { label: "80×25 cm", price: 14000 },
+    { label: "100×30 cm", price: 16000 },
+    { label: "120×35 cm", price: 18000 },
+    { label: "140×40 cm", price: 20000 }
+  ],
+  three_words: [
+    { label: "100×30 cm", price: 20000 },
+    { label: "120×30 cm", price: 22000 },
+    { label: "140×35 cm", price: 24000 },
+    { label: "160×40 cm", price: 26000 }
+  ]
+};
+
+const COLORS = [
+  { id:"white",  name:"أبيض",  hex:"#ffffff" },
+  { id:"red",    name:"أحمر",  hex:"#ff2222" },
+  { id:"blue",   name:"أزرق",  hex:"#2288ff" },
+  { id:"green",  name:"أخضر",  hex:"#22ff6e" },
+  { id:"yellow", name:"أصفر",  hex:"#ffdd22" },
+  { id:"pink",   name:"وردي",  hex:"#ff22b0" },
+  { id:"purple", name:"بنفسجي",hex:"#9922ff" },
+  { id:"orange", name:"برتقالي",hex:"#ff8c22" },
+  { id:"cyan",   name:"سماوي", hex:"#22eeff" },
+  { id:"multi",  name:"متعدد", hex:"multi" }
+];
+
+let products = [];
+let currentProduct = null;
+let selectedSizeCat = 'one_word';
+let selectedSize = null;
+let selectedColor = null;
+let currentImgIndex = 0;
+let customDesignOpt = 'yes';
+let cuSizeCat = 'one_word';
+let cuSelectedSize = null;
+let cuSizeType = 'std';
+let cuColors = [];
+
+// ── LOAD PRODUCTS ──
+function loadProducts() {
+  const stored = localStorage.getItem('lompa_products');
+  products = stored ? JSON.parse(stored) : [];
+}
+
+// ── NAVIGATION ──
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function show(id) { document.getElementById(id).style.display = 'block'; }
+
+function goHome() {
+  hide('products-section');
+  hide('product-detail');
+  hide('confirm-section');
+  hide('custom-section');
+  show('main-hero');
+  document.getElementById('choices-section').style.display = 'grid';
+}
+
+function showProducts() {
+  hide('main-hero');
+  document.getElementById('choices-section').style.display = 'none';
+  hide('product-detail');
+  renderProductsList();
+  show('products-section');
+}
+
+function goProducts() {
+  hide('product-detail');
+  hide('confirm-section');
+  renderProductsList();
+  show('products-section');
+}
+
+function showCustom() {
+  hide('main-hero');
+  document.getElementById('choices-section').style.display = 'none';
+  renderCuColors();
+  renderCuSizes();
+  document.getElementById('success-custom').classList.remove('show');
+  document.getElementById('custom-form').style.display = 'flex';
+  show('custom-section');
+}
+
+function goProductDetail() {
+  hide('confirm-section');
+  show('product-detail');
+}
+
+function goConfirm() {
+  if (!selectedSize && cuSizeType !== 'custom') {
+    showToast('⚠️ اختر القياس أولاً'); return;
+  }
+  if (!selectedColor) {
+    showToast('⚠️ اختر اللون أولاً'); return;
+  }
+  buildSummary();
+  document.getElementById('success-order').classList.remove('show');
+  document.getElementById('confirm-form').style.display = 'block';
+  hide('product-detail');
+  show('confirm-section');
+}
+
+// ── PRODUCTS LIST ──
+function renderProductsList() {
+  const grid = document.getElementById('products-grid');
+  if (!products.length) {
+    grid.innerHTML = '<div class="empty-state"><div>📦</div><p>لا توجد منتجات متاحة</p></div>';
+    return;
+  }
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="openProduct('${p.id}')">
+      <div class="product-thumb">
+        ${p.images && p.images[0]
+          ? `<img src="${p.images[0]}" />`
+          : `<div class="no-img">🔴</div>`}
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        ${p.desc ? `<div class="product-desc">${p.desc}</div>` : ''}
+        <div class="product-price">${Number(p.base_price||0).toLocaleString()} <span>دج ~</span></div>
+      </div>
+      <div class="product-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ── PRODUCT DETAIL ──
+function openProduct(id) {
+  currentProduct = products.find(p => p.id === id);
+  if (!currentProduct) return;
+
+  hide('products-section');
+
+  // Reset
+  selectedSize = null;
+  selectedColor = null;
+  currentImgIndex = 0;
+  selectedSizeCat = 'one_word';
+
+  document.getElementById('detail-title').textContent = currentProduct.name;
+  document.getElementById('detail-name').textContent = currentProduct.name;
+  document.getElementById('detail-desc').textContent = currentProduct.desc || '';
+
+  buildSlider();
+  renderSizes('one_word');
+  renderColors();
+  updatePrice();
+
+  // Reset size tabs UI
+  document.querySelectorAll('#size-tabs .size-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('#size-tabs .size-tab[data-cat="one_word"]').classList.add('active');
+  document.getElementById('custom-size-wrap').classList.remove('show');
+
+  show('product-detail');
+}
+
+// ── SLIDER ──
+function buildSlider() {
+  const wrap = document.getElementById('slider-wrap');
+  const imgs = currentProduct.images || [];
+
+  // Remove old images
+  wrap.querySelectorAll('img:not(#logo-img-src)').forEach(i => i.remove());
+  document.getElementById('slider-dots').innerHTML = '';
+
+  if (!imgs.length) {
+    const placeholder = document.createElement('div');
+    placeholder.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;color:#2a1f08;';
+    placeholder.textContent = '🔴';
+    wrap.appendChild(placeholder);
+    return;
+  }
+
+  const prevBtn = wrap.querySelector('.slider-btn.prev');
+  const nextBtn = wrap.querySelector('.slider-btn.next');
+  const dotsEl  = document.getElementById('slider-dots');
+
+  imgs.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    if (i === 0) img.classList.add('active');
+    wrap.insertBefore(img, prevBtn);
+
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dotsEl.appendChild(dot);
+  });
+
+  wrap.querySelector('.slider-btn.prev').style.display = imgs.length > 1 ? 'flex' : 'none';
+  wrap.querySelector('.slider-btn.next').style.display = imgs.length > 1 ? 'flex' : 'none';
+}
+
+function slideImg(dir) {
+  const imgs = currentProduct.images || [];
+  if (imgs.length < 2) return;
+  currentImgIndex = (currentImgIndex + dir + imgs.length) % imgs.length;
+  goToSlide(currentImgIndex);
+}
+
+function goToSlide(idx) {
+  currentImgIndex = idx;
+  const wrap = document.getElementById('slider-wrap');
+  wrap.querySelectorAll('img').forEach((img, i) => img.classList.toggle('active', i === idx));
+  document.querySelectorAll('#slider-dots .dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+// ── SIZES ──
+function selectSizeCat(el) {
+  document.querySelectorAll('#size-tabs .size-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const cat = el.dataset.cat;
+  selectedSizeCat = cat;
+  selectedSize = null;
+  updatePrice();
+
+  if (cat === 'custom') {
+    document.getElementById('sizes-grid').innerHTML = '';
+    document.getElementById('custom-size-wrap').classList.add('show');
+  } else {
+    document.getElementById('custom-size-wrap').classList.remove('show');
+    renderSizes(cat);
+  }
+}
+
+function renderSizes(cat) {
+  const sizes = SIZES[cat] || [];
+  document.getElementById('sizes-grid').innerHTML = sizes.map((s, i) => `
+    <div class="size-option" onclick="selectSize(this, '${s.label}', ${s.price})">
+      <div class="size-dim">${s.label}</div>
+      <div class="size-price">${s.price.toLocaleString()} دج</div>
+    </div>
+  `).join('');
+}
+
+function selectSize(el, label, price) {
+  document.querySelectorAll('.sizes-grid .size-option').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  selectedSize = { label, price };
+  updatePrice();
+}
+
+// ── COLORS ──
+function renderColors() {
+  document.getElementById('colors-grid').innerHTML = COLORS.map(c => `
+    <div class="color-option" onclick="selectColor(this, '${c.id}', '${c.name}')">
+      <div class="color-circle" style="${c.hex === 'multi'
+        ? 'background:linear-gradient(135deg,#ff2222,#ffdd22,#22ff6e,#22eeff,#9922ff)'
+        : 'background:'+c.hex}"></div>
+      <div class="color-name">${c.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectColor(el, id, name) {
+  document.querySelectorAll('#colors-grid .color-option').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedColor = { id, name };
+}
+
+function updatePrice() {
+  const el = document.getElementById('price-display');
+  if (selectedSize) {
+    el.innerHTML = `${selectedSize.price.toLocaleString()} <span>دج</span>`;
+  } else {
+    el.innerHTML = `— <span>دج</span>`;
+  }
+}
+
+// ── CONFIRM ──
+function buildSummary() {
+  const sizeLabel = selectedSizeCat === 'custom'
+    ? (document.getElementById('custom-size').value || 'مخصص')
+    : (selectedSize ? selectedSize.label : '—');
+
+  const priceLabel = selectedSizeCat === 'custom'
+    ? 'سيتم التحديد'
+    : (selectedSize ? selectedSize.price.toLocaleString() + ' دج' : '—');
+
+  document.getElementById('order-summary').innerHTML = `
+    <div class="summary-row">
+      <span class="summary-key">المنتج</span>
+      <span class="summary-val">${currentProduct.name}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-key">القياس</span>
+      <span class="summary-val">${sizeLabel}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-key">اللون</span>
+      <span class="summary-val">${selectedColor ? selectedColor.name : '—'}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-key">السعر</span>
+      <span class="summary-val gold">${priceLabel}</span>
+    </div>
+  `;
+}
+
+function submitOrder() {
+  const name    = document.getElementById('c-name').value.trim();
+  const phone   = document.getElementById('c-phone').value.trim();
+  const address = document.getElementById('c-address').value.trim();
+  const notes   = document.getElementById('c-notes').value.trim();
+  const errorEl = document.getElementById('c-error');
+  const btn     = document.getElementById('c-submit');
+
+  if (!name || !phone || !address) { errorEl.classList.add('show'); return; }
+  errorEl.classList.remove('show');
+
+  const sizeLabel = selectedSizeCat === 'custom'
+    ? (document.getElementById('custom-size').value || 'مخصص')
+    : (selectedSize ? selectedSize.label : '—');
+
+  const priceLabel = selectedSizeCat === 'custom' ? 'سيتم التحديد'
+    : (selectedSize ? selectedSize.price.toLocaleString() + ' دج' : '—');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+
+  emailjs.send('service_p5kebkc', 'template_6whwh4h', {
+    product: currentProduct.name,
+    price: priceLabel,
+    name, phone, address,
+    notes: `القياس: ${sizeLabel} | اللون: ${selectedColor?.name || '—'}\n${notes}`,
+    to_email: 'disone240@gmail.com'
+  }).then(() => {
+    document.getElementById('confirm-form').style.display = 'none';
+    document.getElementById('success-order').classList.add('show');
+  }, () => {
+    btn.disabled = false;
+    btn.innerHTML = '✅ تأكيد الطلب';
+    errorEl.textContent = '⚠️ حدث خطأ، حاول مجدداً';
+    errorEl.classList.add('show');
+  });
+}
+
+// ── CUSTOM ──
+function selectDesignOpt(opt) {
+  customDesignOpt = opt;
+  document.getElementById('has-design-yes').classList.toggle('active', opt === 'yes');
+  document.getElementById('has-design-no').classList.toggle('active', opt === 'no');
+  document.getElementById('upload-area').style.display = opt === 'yes' ? 'block' : 'none';
+}
+
+function previewCustomImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const preview = document.getElementById('upload-preview');
+    preview.src = ev.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function selectCustomSize(type) {
+  cuSizeType = type;
+  document.getElementById('cu-size-std').classList.toggle('active', type === 'std');
+  document.getElementById('cu-size-custom').classList.toggle('active', type === 'custom');
+  document.getElementById('cu-size-std-wrap').style.display = type === 'std' ? 'block' : 'none';
+  document.getElementById('cu-size-custom-wrap').style.display = type === 'custom' ? 'block' : 'none';
+}
+
+function selectCuSizeCat(el) {
+  document.querySelectorAll('#cu-size-tabs .size-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  cuSizeCat = el.dataset.cat;
+  cuSelectedSize = null;
+  renderCuSizes();
+}
+
+function renderCuSizes() {
+  const sizes = SIZES[cuSizeCat] || [];
+  document.getElementById('cu-sizes-grid').innerHTML = sizes.map(s => `
+    <div class="size-option" onclick="selectCuSize(this,'${s.label}',${s.price})">
+      <div class="size-dim">${s.label}</div>
+      <div class="size-price">${s.price.toLocaleString()} دج</div>
+    </div>
+  `).join('');
+}
+
+function selectCuSize(el, label, price) {
+  document.querySelectorAll('#cu-sizes-grid .size-option').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  cuSelectedSize = { label, price };
+}
+
+function renderCuColors() {
+  document.getElementById('cu-colors-grid').innerHTML = COLORS.map(c => `
+    <div class="color-option" onclick="toggleCuColor(this,'${c.id}','${c.name}')">
+      <div class="color-circle" style="${c.hex === 'multi'
+        ? 'background:linear-gradient(135deg,#ff2222,#ffdd22,#22ff6e,#22eeff,#9922ff)'
+        : 'background:'+c.hex}"></div>
+      <div class="color-name">${c.name}</div>
+    </div>
+  `).join('');
+  cuColors = [];
+}
+
+function toggleCuColor(el, id, name) {
+  el.classList.toggle('active');
+  if (el.classList.contains('active')) {
+    cuColors.push(name);
+  } else {
+    cuColors = cuColors.filter(c => c !== name);
+  }
+}
+
+function submitCustom() {
+  const text  = document.getElementById('cu-text').value.trim();
+  const name  = document.getElementById('cu-name').value.trim();
+  const phone = document.getElementById('cu-phone').value.trim();
+  const notes = document.getElementById('cu-notes').value.trim();
+  const errorEl = document.getElementById('cu-error');
+  const btn = document.getElementById('cu-submit');
+
+  if (!text || !name || !phone) { errorEl.classList.add('show'); return; }
+  errorEl.classList.remove('show');
+
+  const sizeLabel = cuSizeType === 'custom'
+    ? (document.getElementById('cu-custom-size').value || 'مخصص')
+    : (cuSelectedSize ? cuSelectedSize.label : 'لم يحدد');
+
+  const colorsLabel = cuColors.length ? cuColors.join('، ') : 'لم يحدد';
+  const designLabel = customDesignOpt === 'yes' ? 'عنده صورة تصميم' : 'يريد تصميم من Lompa';
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+
+  emailjs.send('service_p5kebkc', 'template_6whwh4h', {
+    product: '🎨 طلب تصميم خاص',
+    price: sizeLabel,
+    name, phone,
+    address: '—',
+    notes: `النص: ${text}\nالتصميم: ${designLabel}\nالقياس: ${sizeLabel}\nالألوان: ${colorsLabel}\n${notes}`,
+    to_email: 'disone240@gmail.com'
+  }).then(() => {
+    document.getElementById('custom-form').style.display = 'none';
+    document.getElementById('success-custom').classList.add('show');
+  }, () => {
+    btn.disabled = false;
+    btn.innerHTML = '🌟 أرسل طلب التصميم';
+    errorEl.textContent = '⚠️ حدث خطأ، حاول مجدداً';
+    errorEl.classList.add('show');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+loadProducts();
+</script>
+</body>
+</html>

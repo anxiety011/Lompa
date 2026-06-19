@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lompa — لوحة التحكم</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Outfit:wght@700;900&display=swap');
+
+:root {
+  --gold: #f5a623;
+  --dark: #0a0805;
+  --card: #110e08;
+  --border: #2a2010;
+  --muted: #7a6a4a;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--dark); font-family:'Cairo',sans-serif; color:#fff; min-height:100vh; }
+
+/* LOGIN */
+.login-wrap { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.login-box {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:24px; padding:40px 28px; width:100%; max-width:360px;
+  text-align:center;
+  box-shadow: 0 0 60px rgba(245,166,35,0.1);
+}
+.login-logo { font-size:40px; margin-bottom:12px; }
+.login-brand { font-family:'Outfit',sans-serif; font-size:24px; font-weight:900; color:var(--gold); margin-bottom:4px; }
+.login-sub { font-size:13px; color:var(--muted); margin-bottom:28px; }
+.login-box input {
+  width:100%; background:#0f0c07; border:1px solid var(--border);
+  border-radius:12px; padding:14px; color:#fff;
+  font-family:'Cairo',sans-serif; font-size:15px; outline:none;
+  margin-bottom:12px; transition:border-color 0.2s;
+}
+.login-box input:focus { border-color:var(--gold); }
+.login-err { color:#ff5555; font-size:12px; margin-bottom:10px; display:none; }
+.login-err.show { display:block; }
+
+/* BUTTONS */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 20px; border:none; border-radius:12px;
+  cursor:pointer; font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
+  transition:opacity 0.2s, transform 0.1s; width:100%;
+}
+.btn:active { transform:scale(0.98); }
+.btn-gold { background:linear-gradient(135deg,#f5a623,#e8850a); color:#0a0805; box-shadow:0 0 20px rgba(245,166,35,0.3); }
+.btn-gold:hover { opacity:0.9; }
+.btn-dark { background:var(--card); color:var(--muted); }
+.btn-danger { background:#2a0a0a; color:#ff5555; }
+.btn-green { background:#0a2a15; color:#22cc66; }
+.btn-sm { width:auto; padding:8px 14px; font-size:13px; border-radius:8px; }
+
+/* HEADER */
+header {
+  background:#0d0a06; border-bottom:1px solid var(--border);
+  padding:16px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.header-brand { font-family:'Outfit',sans-serif; font-size:18px; font-weight:900; color:var(--gold); }
+.header-right { display:flex; gap:8px; align-items:center; }
+
+/* LAYOUT */
+.container { max-width:900px; margin:0 auto; padding:24px 16px 60px; }
+
+/* TABS */
+.tabs { display:flex; gap:4px; background:#0d0a06; border-radius:12px; padding:4px; margin-bottom:24px; border:1px solid var(--border); }
+.tab { flex:1; padding:10px; text-align:center; border-radius:10px; cursor:pointer; font-size:14px; font-weight:700; color:var(--muted); transition:all 0.2s; }
+.tab.active { background:var(--card); color:var(--gold); border:1px solid var(--border); }
+
+/* SECTION */
+.section { display:none; }
+.section.active { display:block; }
+
+/* SETTINGS */
+.settings-grid { display:flex; flex-direction:column; gap:16px; }
+.setting-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; }
+.setting-title { font-size:14px; font-weight:700; color:var(--gold); margin-bottom:14px; }
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:600; }
+.field input, .field textarea {
+  width:100%; background:#0f0c07; border:1px solid var(--border);
+  border-radius:10px; padding:11px 13px; color:#fff;
+  font-family:'Cairo',sans-serif; font-size:14px; outline:none;
+  transition:border-color 0.2s; resize:none;
+}
+.field input:focus, .field textarea:focus { border-color:var(--gold); }
+.field input::placeholder { color:var(--muted); }
+
+/* PRODUCTS */
+.products-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+.products-count { font-size:16px; font-weight:700; }
+
+.prod-list { display:flex; flex-direction:column; gap:12px; }
+.prod-item {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:16px; overflow:hidden;
+  display:flex; align-items:center; gap:0;
+}
+.prod-thumb { width:80px; height:80px; flex-shrink:0; overflow:hidden; }
+.prod-thumb img { width:100%; height:100%; object-fit:cover; }
+.prod-thumb .no-img { width:100%; height:100%; background:#1a1408; display:flex; align-items:center; justify-content:center; font-size:24px; }
+.prod-body { padding:12px 14px; flex:1; min-width:0; }
+.prod-name { font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prod-price { font-size:12px; color:var(--gold); margin-top:2px; }
+.prod-imgs { font-size:11px; color:var(--muted); margin-top:2px; }
+.prod-actions { padding:0 12px; display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+
+.empty { text-align:center; padding:60px 20px; color:var(--muted); }
+.empty div { font-size:50px; margin-bottom:12px; }
+
+/* MODAL */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.9); z-index:100;
+  align-items:flex-end; justify-content:center;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:#100d08; border:1px solid var(--border);
+  border-top:2px solid var(--gold);
+  border-radius:24px 24px 0 0;
+  width:100%; max-width:520px;
+  padding:28px 20px 50px;
+  max-height:92vh; overflow-y:auto;
+  animation:slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform:translateY(100%); }
+  to { transform:translateY(0); }
+}
+.modal-handle { width:40px; height:4px; background:#2a1f08; border-radius:4px; margin:0 auto 20px; }
+.modal-title { font-size:17px; font-weight:900; color:var(--gold); margin-bottom:20px; }
+
+/* IMG UPLOAD */
+.imgs-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+.img-thumb-wrap { position:relative; }
+.img-thumb { width:70px; height:70px; object-fit:cover; border-radius:10px; border:1px solid var(--border); }
+.img-del { position:absolute; top:-6px; right:-6px; background:#ff2222; color:#fff; border:none; border-radius:50%; width:20px; height:20px; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.add-img-btn {
+  width:70px; height:70px; background:#1a1408; border:2px dashed var(--border);
+  border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; font-size:22px; color:var(--muted); transition:border-color 0.2s;
+}
+.add-img-btn:hover { border-color:var(--gold); }
+.add-img-btn span { font-size:10px; margin-top:2px; }
+
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.modal-actions .btn { flex:1; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:#1a1408; border:1px solid var(--gold); color:var(--gold);
+  padding:12px 24px; border-radius:30px; font-size:14px; font-weight:700;
+  opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; white-space:nowrap;
+}
+.toast.show { opacity:1; }
+
+/* SIZES EDITOR */
+.sizes-editor { display:flex; flex-direction:column; gap:8px; }
+.size-row { display:flex; gap:8px; align-items:center; }
+.size-row input { flex:1; }
+.size-row .btn { width:36px; height:36px; padding:0; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">🔴</div>
+    <div class="login-brand">Lompa</div>
+    <div class="login-sub">لوحة التحكم</div>
+    <input type="password" id="pwd" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()" />
+    <div class="login-err" id="login-err">❌ كلمة المرور خاطئة</div>
+    <button class="btn btn-gold" onclick="doLogin()">دخول</button>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="header-brand">🔴 Lompa Admin</div>
+    <div class="header-right">
+      <a href="store.html" target="_blank" class="btn btn-green btn-sm" style="text-decoration:none">👁 المتجر</a>
+      <button class="btn btn-dark btn-sm" onclick="doLogout()">خروج</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('products',this)">📦 المنتجات</div>
+      <div class="tab" onclick="switchTab('settings',this)">⚙️ الإعدادات</div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="section active" id="tab-products">
+      <div class="products-header">
+        <div class="products-count">المنتجات (<span id="prod-count">0</span>)</div>
+        <button class="btn btn-gold btn-sm" onclick="openAddModal()">+ إضافة منتج</button>
+      </div>
+      <div class="prod-list" id="prod-list">
+        <div class="empty"><div>📦</div><p>لا توجد منتجات</p></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="section" id="tab-settings">
+      <div class="settings-grid">
+
+        <div class="setting-card">
+          <div class="setting-title">🏷️ معلومات المتجر</div>
+          <div class="field"><label>اسم المتجر</label><input id="s-name" value="Lompa" /></div>
+          <div class="field"><label>الشعار (بالإنجليزية)</label><input id="s-tagline" value="Not everybody shines" /></div>
+          <div class="field"><label>الشعار (بالعربية)</label><input id="s-tagline-ar" value="ليس الجميع يضيء" /></div>
+          <button class="btn btn-gold" onclick="saveSettings()">💾 حفظ</button>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-title">🎨 الألوان المتاحة</div>
+          <div id="colors-list" style="margin-bottom:12px"></div>
+          <button class="btn btn-dark" onclick="addColor()" style="font-size:13px; padding:10px;">+ إضافة لون</button>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-title">📐 جدول الأسعار — كلمة واحدة</div>
+          <div class="sizes-editor" id="sizes-one"></div>
+          <button class="btn btn-dark" style="margin-top:10px; font-size:13px; padding:10px;" onclick="addSizeRow('one_word','sizes-one')">+ إضافة قياس</button>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-title">📐 جدول الأسعار — كلمتان</div>
+          <div class="sizes-editor" id="sizes-two"></div>
+          <button class="btn btn-dark" style="margin-top:10px; font-size:13px; padding:10px;" onclick="addSizeRow('two_words','sizes-two')">+ إضافة قياس</button>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-title">📐 جدول الأسعار — ثلاث كلمات</div>
+          <div class="sizes-editor" id="sizes-three"></div>
+          <button class="btn btn-dark" style="margin-top:10px; font-size:13px; padding:10px;" onclick="addSizeRow('three_words','sizes-three')">+ إضافة قياس</button>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-title">🔐 تغيير كلمة المرور</div>
+          <div class="field"><input type="password" id="new-pwd" placeholder="كلمة المرور الجديدة" /></div>
+          <div class="field"><input type="password" id="new-pwd2" placeholder="تأكيد كلمة المرور" /></div>
+          <button class="btn btn-gold" onclick="changePwd()">تغيير</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRODUCT MODAL ══ -->
+<div class="overlay" id="prod-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">إضافة منتج</div>
+
+    <div class="field">
+      <label>صور المنتج (يمكن إضافة أكثر من صورة)</label>
+      <div class="imgs-row" id="imgs-row">
+        <div class="add-img-btn" onclick="document.getElementById('img-inp').click()">
+          <div>＋</div><span>صورة</span>
+        </div>
+      </div>
+      <input type="file" id="img-inp" accept="image/*" style="display:none" multiple onchange="addImages(event)" />
+    </div>
+
+    <div class="field"><label>اسم المنتج *</label><input id="p-name" placeholder="مثال: لافتة OPEN" /></div>
+    <div class="field"><label>السعر الأساسي (دج) *</label><input type="number" id="p-price" placeholder="8000" /></div>
+    <div class="field"><label>وصف المنتج</label><textarea id="p-desc" rows="2" placeholder="وصف مختصر..."></textarea></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="saveProduct()">💾 حفظ</button>
+      <button class="btn btn-dark" onclick="closeModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let PASSWORD = localStorage.getItem('lompa_pwd') || 'opensign2024';
+let products = [];
+let editingId = null;
+let pendingImages = [];
+
+const DEFAULT_SIZES = {
+  one_word: [
+    {label:"40×15 cm",price:8000},{label:"60×20 cm",price:10000},
+    {label:"80×25 cm",price:12000},{label:"100×30 cm",price:14000}
+  ],
+  two_words: [
+    {label:"80×25 cm",price:14000},{label:"100×30 cm",price:16000},
+    {label:"120×35 cm",price:18000},{label:"140×40 cm",price:20000}
+  ],
+  three_words: [
+    {label:"100×30 cm",price:20000},{label:"120×30 cm",price:22000},
+    {label:"140×35 cm",price:24000},{label:"160×40 cm",price:26000}
+  ]
+};
+
+const DEFAULT_COLORS = [
+  {id:"white",name:"أبيض",hex:"#ffffff"},
+  {id:"red",name:"أحمر",hex:"#ff2222"},
+  {id:"blue",name:"أزرق",hex:"#2288ff"},
+  {id:"green",name:"أخضر",hex:"#22ff6e"},
+  {id:"yellow",name:"أصفر",hex:"#ffdd22"},
+  {id:"pink",name:"وردي",hex:"#ff22b0"},
+  {id:"purple",name:"بنفسجي",hex:"#9922ff"},
+  {id:"orange",name:"برتقالي",hex:"#ff8c22"},
+  {id:"cyan",name:"سماوي",hex:"#22eeff"},
+  {id:"multi",name:"متعدد الألوان",hex:"multi"}
+];
+
+function load(key, def) {
+  try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; }
+}
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+// ── LOGIN ──
+function doLogin() {
+  const pwd = document.getElementById('pwd').value;
+  if (pwd === PASSWORD) {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    products = load('lompa_products', []);
+    renderProducts();
+    renderSettings();
+  } else {
+    document.getElementById('login-err').classList.add('show');
+  }
+}
+function doLogout() {
+  document.getElementById('login-wrap').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pwd').value = '';
+}
+
+// ── TABS ──
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── PRODUCTS ──
+function renderProducts() {
+  const list = document.getElementById('prod-list');
+  document.getElementById('prod-count').textContent = products.length;
+  if (!products.length) {
+    list.innerHTML = '<div class="empty"><div>📦</div><p>لا توجد منتجات</p></div>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div class="prod-item">
+      <div class="prod-thumb">
+        ${p.images && p.images[0]
+          ? `<img src="${p.images[0]}" />`
+          : `<div class="no-img">🔴</div>`}
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">من ${Number(p.base_price||0).toLocaleString()} دج</div>
+        <div class="prod-imgs">📷 ${(p.images||[]).length} صورة</div>
+      </div>
+      <div class="prod-actions">
+        <button class="btn btn-dark btn-sm" onclick="editProduct('${p.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delProduct('${p.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAddModal() {
+  editingId = null;
+  pendingImages = [];
+  document.getElementById('modal-title').textContent = 'إضافة منتج';
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-price').value = '';
+  document.getElementById('p-desc').value = '';
+  renderImgsRow();
+  document.getElementById('prod-modal').classList.add('open');
+}
+
+function editProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+  pendingImages = [...(p.images || [])];
+  document.getElementById('modal-title').textContent = 'تعديل المنتج';
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-price').value = p.base_price || '';
+  document.getElementById('p-desc').value = p.desc || '';
+  renderImgsRow();
+  document.getElementById('prod-modal').classList.add('open');
+}
+
+function delProduct(id) {
+  if (!confirm('حذف المنتج؟')) return;
+  products = products.filter(p => p.id !== id);
+  save('lompa_products', products);
+  renderProducts();
+  toast('🗑️ تم الحذف');
+}
+
+function closeModal() { document.getElementById('prod-modal').classList.remove('open'); }
+
+function addImages(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingImages.push(ev.target.result);
+      renderImgsRow();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderImgsRow() {
+  const row = document.getElementById('imgs-row');
+  row.innerHTML = pendingImages.map((src, i) => `
+    <div class="img-thumb-wrap">
+      <img class="img-thumb" src="${src}" />
+      <button class="img-del" onclick="removeImg(${i})">×</button>
+    </div>
+  `).join('') + `
+    <div class="add-img-btn" onclick="document.getElementById('img-inp').click()">
+      <div>＋</div><span>صورة</span>
+    </div>
+  `;
+}
+
+function removeImg(i) { pendingImages.splice(i, 1); renderImgsRow(); }
+
+function saveProduct() {
+  const name  = document.getElementById('p-name').value.trim();
+  const price = document.getElementById('p-price').value.trim();
+  const desc  = document.getElementById('p-desc').value.trim();
+  if (!name || !price) { toast('⚠️ اسم المنتج والسعر مطلوبان'); return; }
+
+  if (editingId) {
+    products = products.map(p => p.id === editingId
+      ? { ...p, name, base_price: Number(price), desc, images: pendingImages }
+      : p);
+  } else {
+    products.push({ id: Date.now().toString(), name, base_price: Number(price), desc, images: pendingImages });
+  }
+
+  save('lompa_products', products);
+  renderProducts();
+  closeModal();
+  toast('✅ تم الحفظ');
+}
+
+// ── SETTINGS ──
+function renderSettings() {
+  const colors = load('lompa_colors', DEFAULT_COLORS);
+  const sizes  = load('lompa_sizes', DEFAULT_SIZES);
+
+  document.getElementById('s-name').value       = load('lompa_store_name', 'Lompa');
+  document.getElementById('s-tagline').value    = load('lompa_tagline', 'Not everybody shines');
+  document.getElementById('s-tagline-ar').value = load('lompa_tagline_ar', 'ليس الجميع يضيء');
+
+  renderColorsList(colors);
+  renderSizeRows('sizes-one',   sizes.one_word,    'one_word');
+  renderSizeRows('sizes-two',   sizes.two_words,   'two_words');
+  renderSizeRows('sizes-three', sizes.three_words, 'three_words');
+}
+
+function saveSettings() {
+  save('lompa_store_name', document.getElementById('s-name').value.trim());
+  save('lompa_tagline',    document.getElementById('s-tagline').value.trim());
+  save('lompa_tagline_ar', document.getElementById('s-tagline-ar').value.trim());
+  saveSizes();
+  saveColors();
+  toast('✅ تم حفظ الإعدادات');
+}
+
+// COLORS
+function renderColorsList(colors) {
+  document.getElementById('colors-list').innerHTML = colors.map((c, i) => `
+    <div class="size-row" style="margin-bottom:8px">
+      <input type="color" value="${c.hex === 'multi' ? '#ffffff' : c.hex}" onchange="updateColor(${i},'hex',this.value)" style="width:40px;height:40px;border:none;border-radius:8px;background:none;padding:0;cursor:pointer;flex-shrink:0" />
+      <input value="${c.name}" onchange="updateColor(${i},'name',this.value)" style="flex:1" />
+      <button class="btn btn-danger btn-sm" onclick="removeColor(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+let _colors = load('lompa_colors', DEFAULT_COLORS);
+function updateColor(i, key, val) { _colors[i][key] = val; }
+function removeColor(i) { _colors.splice(i, 1); save('lompa_colors', _colors); renderColorsList(_colors); }
+function addColor() { _colors.push({id:'c'+Date.now(), name:'لون جديد', hex:'#ffffff'}); renderColorsList(_colors); }
+function saveColors() { save('lompa_colors', _colors); }
+
+// SIZES
+function renderSizeRows(elId, sizes, cat) {
+  document.getElementById(elId).innerHTML = sizes.map((s, i) => `
+    <div class="size-row">
+      <input value="${s.label}" onchange="updateSize('${cat}',${i},'label',this.value)" placeholder="40×15 cm" />
+      <input type="number" value="${s.price}" onchange="updateSize('${cat}',${i},'price',this.value)" placeholder="سعر" style="max-width:100px" />
+      <button class="btn btn-danger btn-sm" onclick="removeSizeRow('${cat}',${i})">×</button>
+    </div>
+  `).join('');
+}
+
+let _sizes = load('lompa_sizes', DEFAULT_SIZES);
+function updateSize(cat, i, key, val) { _sizes[cat][i][key] = key === 'price' ? Number(val) : val; }
+function removeSizeRow(cat, i) {
+  _sizes[cat].splice(i, 1);
+  const elMap = { one_word:'sizes-one', two_words:'sizes-two', three_words:'sizes-three' };
+  renderSizeRows(elMap[cat], _sizes[cat], cat);
+}
+function addSizeRow(cat, elId) {
+  _sizes[cat].push({label:'',price:0});
+  renderSizeRows(elId, _sizes[cat], cat);
+}
+function saveSizes() { save('lompa_sizes', _sizes); }
+
+// PASSWORD
+function changePwd() {
+  const p1 = document.getElementById('new-pwd').value;
+  const p2 = document.getElementById('new-pwd2').value;
+  if (!p1) { toast('⚠️ أدخل كلمة مرور'); return; }
+  if (p1 !== p2) { toast('⚠️ كلمتا المرور غير متطابقتين'); return; }
+  PASSWORD = p1;
+  localStorage.setItem('lompa_pwd', p1);
+  toast('✅ تم تغيير كلمة المرور');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
